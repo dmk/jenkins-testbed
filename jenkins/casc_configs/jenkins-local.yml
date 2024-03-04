@@ -1,0 +1,64 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n\n"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+       - id: "admin"
+         password: "changeme"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  nodes:
+    - permanent:
+        name: "agent-1"
+        remoteFS: "/home/jenkins/agent"
+        numExecutors: 2
+        labelString: "agent-1"
+        launcher:
+          JNLPLauncher:
+            workDirSettings:
+              disabled: false
+              internalDir: "remoting"
+              failIfWorkDirIsMissing: false
+            tunnel: ""
+
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+        - usernamePassword:
+            scope: GLOBAL
+            id: gitea
+            username: jenkins
+            password: changeme
+
+jobs:
+  - script: >
+      job('seed-job') {
+        description('A seed job to process Job DSL scripts')
+        scm {
+          git {
+            remote {
+              url('http://gitea:3000/jenkins/job-dsl.git')
+              credentials('gitea')
+            }
+            branches('*/main')
+          }
+        }
+        triggers {
+          scm('H/5 * * * *')
+        }
+        steps {
+          dsl {
+            external('**/*.groovy')
+            ignoreExisting()
+          }
+        }
+      }

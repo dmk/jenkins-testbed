@@ -1,0 +1,55 @@
+pipeline {
+  agent any
+
+  triggers {
+    cron 'H/5 * * * *'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checking out source code...'
+        // Simulate checkout delay
+        script {
+          // Random sleep between 10 and 40 seconds
+          def randomSleep = new Random().nextInt(5) + 5
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Checkout complete.'
+      }
+    }
+    stage('Build') {
+      steps {
+        echo 'Building project...'
+        script {
+          // Random sleep between 20 and 80 seconds
+          def randomSleep = new Random().nextInt(10) + 15
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Build complete.'
+      }
+    }
+    stage('Unit Tests') {
+      steps {
+        echo 'Running unit tests...'
+        script {
+          // Random sleep between 20 and 60 seconds
+          def randomSleep = new Random().nextInt(5) + 10
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Unit tests passed.'
+      }
+    }
+    stage('Integration Tests') {
+      steps {
+        echo 'Running integration tests...'
+        script {
+          // Random sleep between 30 and 90 seconds
+          def randomSleep = new Random().nextInt(5) + 10
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Integration tests passed.'
+      }
+    }
+  }
+}

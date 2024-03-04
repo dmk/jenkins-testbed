@@ -1,0 +1,55 @@
+pipeline {
+  agent any
+
+  triggers {
+    cron 'H/5 * * * *'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checking out source code...'
+        // Simulate checkout delay
+        script {
+          // Random sleep between 10 and 40 seconds
+          def randomSleep = new Random().nextInt(5) + 5
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Checkout complete.'
+      }
+    }
+    stage('Deploy to Staging') {
+      steps {
+        echo 'Deploying to staging environment...'
+        script {
+          // Random sleep between 15 and 60 seconds
+          def randomSleep = new Random().nextInt(10) + 5
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Deployment to staging complete.'
+      }
+    }
+    stage('Staging Tests') {
+      steps {
+        echo 'Running tests in staging environment...'
+        script {
+          // Random sleep between 25 and 80 seconds
+          def randomSleep = new Random().nextInt(5) + 15
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Staging tests passed.'
+      }
+    }
+    stage('Deploy to Production') {
+      steps {
+        echo 'Deploying to production environment...'
+        script {
+          // Random sleep between 20 and 50 seconds
+          def randomSleep = new Random().nextInt(10) + 10
+          sleep time: randomSleep, unit: 'SECONDS'
+        }
+        echo 'Deployment to production complete.'
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  jenkins:
+    build: ./jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./jenkins/casc_configs:/var/jenkins_home/casc_configs:ro
+
+  # jenkins-agent:
+  #   build: ./jenkins-agent
+  #   environment:
+  #     JENKINS_URL: http://jenkins:8080/
+  #     JENKINS_AGENT_NAME: agent-1
+  #     JENKINS_SECRET: xxxxxxxx
+  #     JENKINS_AGENT_WORKDIR: /home/jenkins/agent
+  #   volumes:
+  #     - jenkins_agent_workdir:/home/jenkins/agent
+  #   depends_on:
+  #     - jenkins
+
+  gitea:
+    image: gitea/gitea:latest
+    restart: always
+    volumes:
+      - ./gitea/data:/data
+      - ./gitea/app.ini:/data/gitea/conf/app.ini
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    ports:
+      - "3000:3000"
+      - "222:2222"
+
+  gitea-init:
+    image: gitea/gitea:latest
+    restart: no
+    command: bash /init/init.sh
+    user: git
+    volumes:
+      - ./gitea/data:/data
+      - ./gitea/app.ini:/data/gitea/conf/app.ini
+      - ./gitea/init:/init
+    depends_on:
+      - gitea
+
+volumes:
+  jenkins_home:
+  jenkins_agent_workdir:
+  git_data:
